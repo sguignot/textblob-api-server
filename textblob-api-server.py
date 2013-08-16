@@ -6,12 +6,16 @@ from text.taggers import NLTKTagger
 from flask import Flask, jsonify, abort, request, make_response, url_for
 import os, psutil
 
+DEV_ENV = bool(os.environ.get('DEV_ENV', False))
+
 class TextBlobFactory:
     def __init__(self):
         # create custom components
         self.naive_bayes_analyzer = NaiveBayesAnalyzer()
         self.conll_extractor = ConllExtractor()
         self.nltk_tagger = NLTKTagger()
+        if DEV_ENV:
+            return
         # train all components (default and custom)
         text = 'TextBlob blobs great!'
         default_blob = TextBlob(text)
@@ -117,4 +121,4 @@ def get_meminfo():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=DEV_ENV)
