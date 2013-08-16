@@ -1,0 +1,4 @@
+textblob==0.5.2
+flask==0.10.1
+numpy==1.7.1
+psutil==1.0.1
