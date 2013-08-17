@@ -3,7 +3,7 @@ from text.blob import Blobber
 from text.sentiments import NaiveBayesAnalyzer
 from text.np_extractors import ConllExtractor
 from text.taggers import NLTKTagger
-from flask import Flask, jsonify, abort, request, make_response, url_for
+from flask import Flask, jsonify, abort, request, make_response, url_for, redirect
 import os, psutil
 
 DEV_ENV = bool(os.environ.get('DEV_ENV', False))
@@ -57,6 +57,10 @@ def not_found(error):
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify( { 'error': 'Not found' } ), 404)
+
+@app.route('/')
+def index():
+    return redirect(url_for('static', filename='index.html'))
 
 @app.route('/textblob/api/sentiment', methods = ['POST'])
 def get_sentiment():

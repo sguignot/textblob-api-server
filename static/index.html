@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>TextBlob API Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="row">
+        <div class="span6">
+          <form>
+            <h2>Type or paste your text here</h2>
+            <textarea id="corpus" style="width: 100%;" rows="10"></textarea>
+          </form>
+        </div>
+        <div class="span6">
+          <h2>Live analysis here</h2>
+          <span id="sentiment" class="label">Sentiment</span>
+          <textarea readonly id="sentiment_result" style="width: 100%;" rows="2"></textarea>
+          <span class="label">Noun Phrases</span>
+          <textarea readonly id="noun_phrases_result" style="width: 100%;" rows="2"></textarea>
+          <span class="label">POS Tags</span>
+          <textarea readonly id="pos_tags_result" style="width: 100%;" rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+    jQuery(function($) {
+      var wto
+      $('#corpus').bind('change keyup paste input', function() {
+        clearTimeout(wto)
+        wto = setTimeout(function() {
+          var reqData = { text: $('#corpus').val() }
+          $.ajax({
+            url: '/textblob/api/sentiment',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(reqData),
+            dataType: 'json',
+            success: function(data, status) {
+              var polarity = data['polarity']
+              var r = 0, g = 0, b = 0
+              if (polarity > 0) { g = Math.round(polarity * 255) }
+              if (polarity < 0) { r = Math.round(polarity * -255) }
+              $('#sentiment').css('background-color', 'rgb('+r+','+g+','+b+')')
+              $('#sentiment_result').val(JSON.stringify(data))
+            }
+          })
+
+          $.ajax({
+            url: '/textblob/api/pos_tags',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(reqData),
+            dataType: 'json',
+            success: function(data, status) {
+              $('#pos_tags_result').val(JSON.stringify(data))
+            }
+          })
+
+          $.ajax({
+            url: '/textblob/api/noun_phrases',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(reqData),
+            dataType: 'json',
+            success: function(data, status) {
+              $('#noun_phrases_result').val(JSON.stringify(data))
+            }
+          })
+
+        }, 200)
+      })
+    })
+    </script>
+
+  </body>
+</html>
