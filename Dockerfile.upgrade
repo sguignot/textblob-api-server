@@ -4,8 +4,6 @@
 # DOCKER-VERSION 0.5.3
 
 FROM sguignot/textblob-api-server
-MAINTAINER Sébastien Guignot "sebastien.guignot@gmail.com"
-
 RUN cd /srv/textblob-api-server && git pull
 
 EXPOSE 5000
