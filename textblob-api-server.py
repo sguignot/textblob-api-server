@@ -35,7 +35,6 @@ class TextBlobFactory:
             options['np_extractor'] = self.conll_extractor
         if request_json.get('pos_tagger') == 'NLTKTagger':
             options['pos_tagger'] = self.nltk_tagger
-        print 'TextBlob options: ', options
         return TextBlob(request_json['text'], **options)
 
 # human size
