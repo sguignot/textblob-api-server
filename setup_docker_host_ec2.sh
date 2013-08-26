@@ -36,6 +36,10 @@ server {
   }
 }
 EOF
+
+echo "Starting textblob-api-server in docker..."
+service textblob-api-server start
+
 echo "Restarting nginx..."
 service nginx restart
 
