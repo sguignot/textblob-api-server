@@ -23,8 +23,10 @@
           <textarea readonly id="sentiment_result" style="width: 100%;" rows="2"></textarea>
           <span class="label">Noun Phrases</span> <code>/textblob/api/noun_phrases</code>
           <textarea readonly id="noun_phrases_result" style="width: 100%;" rows="2"></textarea>
-          <span class="label">POS Tags</span> <code>/textblob/api/pos_tags</code>
+          <span class="label"><a href="http://bulba.sdsu.edu/jeanette/thesis/PennTags.html" target="_blank">POS Tags</a></span> <code>/textblob/api/pos_tags</code>
           <textarea readonly id="pos_tags_result" style="width: 100%;" rows="10"></textarea>
+          <span class="label">POS Tags (Perceptron)</span> <code>/textblob/api/pos_tags</code>
+          <textarea readonly id="ap_pos_tags_result" style="width: 100%;" rows="10"></textarea>
         </div>
       </div>
 
@@ -43,6 +45,7 @@
         clearTimeout(wto)
         wto = setTimeout(function() {
           var reqData = { text: $('#corpus').val() }
+          var perceptronReqData = { text: $('#corpus').val(), pos_tagger: 'PerceptronTagger' }
           $.ajax({
             url: '/textblob/api/sentiment',
             type: 'POST',
@@ -67,6 +70,17 @@
             dataType: 'json',
             success: function(data, status) {
               $('#pos_tags_result').val(JSON.stringify(data))
+            }
+          })
+
+          $.ajax({
+            url: '/textblob/api/pos_tags',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(perceptronReqData),
+            dataType: 'json',
+            success: function(data, status) {
+              $('#ap_pos_tags_result').val(JSON.stringify(data))
             }
           })
 

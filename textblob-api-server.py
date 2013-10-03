@@ -3,6 +3,7 @@ from text.blob import Blobber
 from text.sentiments import NaiveBayesAnalyzer
 from text.np_extractors import ConllExtractor
 from text.taggers import NLTKTagger
+from textblob_aptagger import PerceptronTagger
 from flask import Flask, jsonify, abort, request, make_response, url_for, redirect
 import os, psutil
 
@@ -14,6 +15,7 @@ class TextBlobFactory:
         self.naive_bayes_analyzer = NaiveBayesAnalyzer()
         self.conll_extractor = ConllExtractor()
         self.nltk_tagger = NLTKTagger()
+        self.perceptron_tagger = PerceptronTagger()
         if DEV_ENV:
             return
         # train all components (default and custom)
@@ -26,15 +28,19 @@ class TextBlobFactory:
         custom_blob.sentiment
         custom_blob.noun_phrases
         custom_blob.pos_tags
+        custom2_blob = TextBlob(text, pos_tagger=self.perceptron_tagger)
+        custom2_blob.pos_tags
 
     def create_blob(self, request_json):
-        options = {'clean_html': True}
+        options = {}
         if request_json.get('analyzer') == 'NaiveBayesAnalyzer':
             options['analyzer'] = self.naive_bayes_analyzer
         if request_json.get('np_extractor') == 'ConllExtractor':
             options['np_extractor'] = self.conll_extractor
         if request_json.get('pos_tagger') == 'NLTKTagger':
             options['pos_tagger'] = self.nltk_tagger
+        elif request_json.get('pos_tagger') == 'PerceptronTagger':
+            options['pos_tagger'] = self.perceptron_tagger
         return TextBlob(request_json['text'], **options)
 
 # human size
